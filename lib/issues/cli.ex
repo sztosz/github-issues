@@ -24,11 +24,21 @@ defmodule Issues.CLI do
   def parse_args(argv) do
     parse = OptionParser.parse(argv, switches: [ help: :bolean],
                                      aliases:  [ h:    :help  ])
+    # case parse do
+    #   { [help: true], _, _ }           -> :help
+    #   { _, [user, project, count], _ } -> {user, project, String.to_integer(count)}
+    #   { _, [user, project], _ }        -> {user, project, @default_count}
+    #   _                                -> :help
+    # end
+
     case parse do
-      { [help: true], _, _ }           -> :help
-      { _, [user, project, count], _ } -> {user, project, String.to_integer(count)}
-      { _, [user, project], _ }        -> {user, project, @default_count}
-      _                                -> :help
+      { [ help: true ], _, _ }
+        -> :help
+      { _, [ user, project, count ], _ }
+        -> { user, project, String.to_integer(count) }
+      { _, [ user, project ], _ }
+        -> { user, project, @default_count }
+      _ -> :help
     end
   end
 
@@ -46,10 +56,6 @@ defmodule Issues.CLI do
     usage: issues <user> <project> [ count | #{@default_count} ]
     """
     System.halt(0)
-  end
-
-  def process(_) do
-    process(:help)
   end
 
   def decode_response({:ok, body}), do: body
