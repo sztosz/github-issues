@@ -42,20 +42,20 @@ defmodule Issues.CLI do
     end
   end
 
-  def proces({user, project, count}) do
+  def process(:help) do
+    IO.puts """
+    usage: issues <user> <project> [ count | #{@default_count} ]
+    """
+    System.halt(0)
+  end
+
+  def process({user, project, count}) do
     Issues.GithubIssues.fetch(user, project)
       |> decode_response
       |> convert_to_list_of_maps
       |> sort_into_ascending_order
       |> Enum.take(count)
       |> TableView.outpu_table
-  end
-
-  def process(:help) do
-    IO.puts """
-    usage: issues <user> <project> [ count | #{@default_count} ]
-    """
-    System.halt(0)
   end
 
   def decode_response({:ok, body}), do: body
